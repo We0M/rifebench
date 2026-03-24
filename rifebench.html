@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rifebench — Documentation</title>
+    <style>
+        /* ── Reset & Base ─────────────────────────────────────────── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #0d1117;
+            --bg2: #161b22;
+            --bg3: #21262d;
+            --fg: #e6edf3;
+            --fg2: #8b949e;
+            --fg3: #484f58;
+            --accent: #58a6ff;
+            --accent2: #1f6feb;
+            --green: #3fb950;
+            --red: #f85149;
+            --yellow: #d29922;
+            --purple: #bc8cff;
+            --mono: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+            --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --radius: 8px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 15px;
+            scroll-padding-top: 120px
+        }
+
+        body {
+            font-family: var(--sans);
+            color: var(--fg);
+            background: var(--bg);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none
+        }
+
+        a:hover {
+            text-decoration: underline
+        }
+
+        /* ── Layout ───────────────────────────────────────────────── */
+        .wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            border-bottom: 1px solid var(--bg3)
+        }
+
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -1px
+        }
+
+        header h1 span {
+            color: var(--accent)
+        }
+
+        header p.sub {
+            color: var(--fg2);
+            margin-top: .5rem;
+            font-size: 1.05rem
+        }
+
+        /* Language toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+            display: flex;
+            gap: 4px;
+            background: var(--bg2);
+            border: 1px solid var(--bg3);
+            border-radius: 6px;
+            padding: 3px;
+        }
+
+        .lang-toggle button {
+            border: none;
+            background: transparent;
+            color: var(--fg2);
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: .85rem;
+            font-weight: 600;
+            transition: all .15s;
+        }
+
+        .lang-toggle button.active {
+            background: var(--accent2);
+            color: #fff
+        }
+
+        /* Nav */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--bg);
+            border-bottom: 1px solid var(--bg3);
+            padding: .6rem 0;
+            margin-bottom: 2rem;
+        }
+
+        nav ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .5rem;
+            list-style: none;
+            justify-content: center
+        }
+
+        nav a {
+            display: inline-block;
+            padding: .3rem .8rem;
+            border-radius: var(--radius);
+            font-size: .85rem;
+            font-weight: 500;
+            color: var(--fg2);
+            transition: background .15s, color .15s;
+        }
+
+        nav a:hover {
+            background: var(--bg3);
+            color: var(--fg);
+            text-decoration: none
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 3rem
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            padding-bottom: .4rem;
+            border-bottom: 1px solid var(--bg3)
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 1.5rem 0 .6rem;
+            color: var(--accent)
+        }
+
+        /* Tables */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+            border-radius: 8px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .88rem
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: .55rem .7rem;
+            border: 1px solid var(--bg3)
+        }
+
+        th {
+            background: var(--bg2);
+            color: var(--accent);
+            font-weight: 600;
+            white-space: nowrap
+        }
+
+        td {
+            background: var(--bg)
+        }
+
+        tr:hover td {
+            background: var(--bg2)
+        }
+
+        td code,
+        th code {
+            background: var(--bg3);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: .82rem
+        }
+
+        /* Code blocks */
+        pre {
+            background: var(--bg2);
+            border: 1px solid var(--bg3);
+            border-radius: var(--radius);
+            padding: 1rem 1.2rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: .85rem;
+            line-height: 1.6;
+        }
+
+        code {
+            font-family: var(--mono)
+        }
+
+        p code,
+        li code {
+            background: var(--bg3);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: .9em
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            padding-left: 1.4rem;
+            margin: .5rem 0
+        }
+
+        li {
+            margin: .3rem 0
+        }
+
+        /* Callout boxes */
+        .note,
+        .warn,
+        .tip {
+            border-left: 3px solid;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            padding: .4rem 1rem;
+            margin: 1rem 0;
+        }
+
+        .note {
+            border-color: var(--accent);
+            background: rgba(88, 166, 255, .07)
+        }
+
+        .warn {
+            border-color: var(--yellow);
+            background: rgba(210, 153, 34, .07)
+        }
+
+        .tip {
+            border-color: var(--green);
+            background: rgba(63, 185, 80, .07)
+        }
+
+        .note::before,
+        .warn::before,
+        .tip::before {
+            font-weight: 700;
+            display: block;
+            margin-bottom: .3rem;
+            font-size: .85rem
+        }
+
+        p {
+            margin: .6rem 0
+        }
+
+        /* Architecture diagram */
+        .arch {
+            font-family: var(--mono);
+            font-size: .82rem;
+            line-height: 1.5;
+            color: var(--green)
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--fg3);
+            font-size: .85rem;
+            border-top: 1px solid var(--bg3)
+        }
+
+        /* Responsive */
+        @media(max-width:640px) {
+            header h1 {
+                font-size: 1.8rem
+            }
+
+            .wrap {
+                padding: 1rem
+            }
+
+            nav ul {
+                gap: .3rem
+            }
+
+            nav a {
+                padding: .2rem .5rem;
+                font-size: .78rem
+            }
+        }
+
+        details>summary {
+            font-size: 1rem;
+            color: #58a6ff;
+            font-weight: 600;
+            padding: 2px 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Language toggle -->
+    <div class="lang-toggle">
+        <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="btn-ru" onclick="setLang('ru')">RU</button>
+    </div>
+
+    <div class="wrap">
+
+        <header>
+            <h1>rife<span>bench</span></h1>
+            <p class="sub" data-en="RIFE model benchmark tool for VapourSynth + vs-mlrt"
+                data-ru="Инструмент бенчмарка RIFE-моделей для VapourSynth + vs-mlrt"></p>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="#overview" data-en="Overview" data-ru="Обзор"></a></li>
+                <li><a href="#install" data-en="Installation" data-ru="Установка"></a></li>
+                <li><a href="#cli" data-en="CLI Reference" data-ru="CLI параметры"></a></li>
+                <li><a href="#modes" data-en="Modes" data-ru="Режимы"></a></li>
+                <li><a href="#script" data-en="Script Setup" data-ru="Настройка скрипта"></a></li>
+                <li><a href="#report" data-en="Report Format" data-ru="Формат отчёта"></a></li>
+                <li><a href="#gpu" data-en="GPU Sampling" data-ru="GPU мониторинг"></a></li>
+                <li><a href="#errors" data-en="Error Handling" data-ru="Обработка ошибок"></a></li>
+                <li><a href="#arch" data-en="Architecture" data-ru="Архитектура"></a></li>
+                <li><a href="#examples" data-en="Examples" data-ru="Примеры"></a></li>
+            </ul>
+        </nav>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="overview">
+            <h2 data-en="Overview" data-ru="Обзор"></h2>
+
+            <p data-en="<b>rifebench</b> automates benchmarking of RIFE frame-interpolation models running through VapourSynth and vs-mlrt. It launches your <code>.vpy</code> script with different model IDs, collects performance metrics (FPS, time) and GPU telemetry (utilization, VRAM, power, PCIe, clocks), and produces a structured Markdown report."
+                data-ru="<b>rifebench</b> автоматизирует бенчмарк RIFE-моделей интерполяции кадров через VapourSynth и vs-mlrt. Инструмент запускает ваш <code>.vpy</code> скрипт с разными ID моделей, собирает метрики производительности (FPS, время) и GPU-телеметрию (загрузка, VRAM, мощность, PCIe, частоты) и создаёт структурированный Markdown-отчёт.">
+            </p>
+
+            <h3 data-en="Key Features" data-ru="Ключевые возможности"></h3>
+            <ul>
+                <li data-en="Two benchmark modes: <code>vspipe</code> (discard output) or <code>ffmpeg</code> (pipe to encoder)"
+                    data-ru="Два режима: <code>vspipe</code> (сброс вывода) или <code>ffmpeg</code> (pipe в кодировщик)">
+                </li>
+                <li data-en="Real-time GPU telemetry via <code>pynvml</code> — no nvidia-smi parsing"
+                    data-ru="GPU-телеметрия в реальном времени через <code>pynvml</code> — без парсинга nvidia-smi">
+                </li>
+                <li data-en="Configurable warm-up, iterations, shuffle, and cooldown"
+                    data-ru="Настраиваемый прогрев, итерации, перемешивание и пауза"></li>
+                <li data-en="Incremental Markdown reports — crash-safe, never lose partial results"
+                    data-ru="Инкрементальные Markdown-отчёты — устойчивы к сбоям, данные не теряются"></li>
+                <li data-en="Cross-platform: Windows + Linux" data-ru="Кроссплатформенный: Windows + Linux"></li>
+            </ul>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="install">
+            <h2 data-en="Installation" data-ru="Установка"></h2>
+
+            <h3 data-en="Requirements" data-ru="Требования"></h3>
+            <ul>
+                <li>Python ≥ 3.9</li>
+                <li data-en="NVIDIA GPU with drivers installed" data-ru="NVIDIA GPU с установленными драйверами"></li>
+                <li data-en="VapourSynth R62+ with <code>vspipe</code> on PATH"
+                    data-ru="VapourSynth R62+ с <code>vspipe</code> в PATH"></li>
+                <li data-en="vs-mlrt plugin installed in VapourSynth" data-ru="Плагин vs-mlrt установлен в VapourSynth">
+                </li>
+            </ul>
+
+            <h3 data-en="Install" data-ru="Установка"></h3>
+            <details>
+                <summary>Auto</summary>
+                <pre><code># Basic install
+pip install .
+
+# With source file probing (ffmpeg-python)
+pip install ".[probe]"</code></pre>
+
+                <div class="note">
+                    <p data-en="If vspipe or ffmpeg are not on PATH, use <code>--vspipe_path</code> and <code>--ffmpeg_path</code> to specify full paths."
+                        data-ru="Если vspipe или ffmpeg нет в PATH, используйте <code>--vspipe_path</code> и <code>--ffmpeg_path</code> для указания полных путей.">
+                    </p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Manual</summary>
+                <p data-en="1. Download:" data-ru="1. Скачать:"></p>
+                <ul>
+                    <li><a href="https://pypi.org/project/pynvml/#files">pynvml</a></li>
+                    <li><a href="https://pypi.org/project/ffmpeg-python/#files">ffmpeg-python</a></li>
+                    <li><a href="https://pypi.org/project/future/#files">future(ffmpeg-python dependency)</a></li>
+                </ul>
+                <p data-en="2. Open portable `python` dir:" data-ru="2. Открыть папку `portable python`:"></p>
+                <ul>
+                    <li data-en="Unpack `rifebench_vXXX.zip`"></li>
+                    <li data-en="Copy/move downloaded `pynvml_XXX.whl` and `ffmpeg-python_XXX.whl` to `./wheel`"></li>
+                </ul>
+                <p data-en="3. Install modules:" data-ru="3. Установить модули:"></p>
+                <pre><code>python pip.pyz install --no-index --find-links=./wheel/pynvml
+python pip.pyz install --no-index --find-links=./wheel/ffmpeg-python</code></pre>
+                <p data-en="4. Run(while in the Python directory):" data-ru="4. Запуск(из папки Python):"></p>
+                <pre><code># cmd
+python -m rifebench.src --source D:/clip.mkv --models 425
+
+# powershell
+.\python -m rifebench.src --source D:/clip.mkv --models 425,4171</code></pre>
+                <div class="tip">
+                    <p data-en="<strong>Tip:</strong><code>For portable use `rifebench.src` instead of `rifebench`</code>"
+                        data-ru="<strong>Tip:</strong><code>Без установки используйте `rifebench.src` вместо `rifebench`</code>">
+                    </p>
+                </div>
+            </details>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="cli">
+            <h2 data-en="CLI Reference" data-ru="CLI параметры"></h2>
+
+            <div class="table-wrap">
+                <table>
+                    <tr>
+                        <th data-en="Parameter" data-ru="Параметр"></th>
+                        <th data-en="Type" data-ru="Тип"></th>
+                        <th data-en="Default" data-ru="По умолчанию"></th>
+                        <th data-en="Description" data-ru="Описание"></th>
+                    </tr>
+
+                    <tr>
+                        <td><code>--script</code></td>
+                        <td>path</td>
+                        <td><b>required</b></td>
+                        <td data-en="Path to VapourSynth benchmark script" data-ru="Путь к VapourSynth скрипту"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--source</code></td>
+                        <td>path</td>
+                        <td><b>required</b></td>
+                        <td data-en="Path to the source video file" data-ru="Путь к исходному видеофайлу"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--models</code></td>
+                        <td>string</td>
+                        <td><b>required</b></td>
+                        <td data-en="Comma-separated model IDs, e.g. <code>47,425,417</code>"
+                            data-ru="ID моделей через запятую, напр. <code>47,425,417</code>"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--mode</code></td>
+                        <td><code>vspipe|ffmpeg</code></td>
+                        <td><code>vspipe</code></td>
+                        <td data-en="Benchmark mode" data-ru="Режим бенчмарка"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--format</code></td>
+                        <td><code>RGBS|RGBH</code></td>
+                        <td><code>RGBH</code></td>
+                        <td data-en="Pixel format forwarded to .vpy" data-ru="Формат пикселя, передаётся в .vpy"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--multi</code></td>
+                        <td>int</td>
+                        <td><code>2</code></td>
+                        <td data-en="Frame multiplier forwarded to .vpy" data-ru="Множитель кадров, передаётся в .vpy">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--streams</code></td>
+                        <td>int</td>
+                        <td><code>2</code></td>
+                        <td data-en="Inference streams forwarded to .vpy" data-ru="Потоки инференса, передаётся в .vpy">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--trt_fp16</code></td>
+                        <td><code>0|1</code></td>
+                        <td><code>1</code></td>
+                        <td data-en="TensorRT FP16 flag forwarded to .vpy"
+                            data-ru="Флаг TensorRT FP16, передаётся в .vpy"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--use_cuda_graph</code></td>
+                        <td><code>0|1</code></td>
+                        <td><code>1</code></td>
+                        <td data-en="CUDA graph flag forwarded to .vpy" data-ru="Флаг CUDA graph, передаётся в .vpy">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--gpu_id</code></td>
+                        <td>int</td>
+                        <td><code>0</code></td>
+                        <td data-en="GPU index (exits with error if not found)"
+                            data-ru="Индекс GPU (ошибка, если не найден)"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--warmup_frames</code></td>
+                        <td>int</td>
+                        <td><code>1000</code></td>
+                        <td data-en="Frames for warmup (<code>0</code> = full clip)"
+                            data-ru="Кадры для прогрева (<code>0</code> = весь клип)"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--warmup_runs</code></td>
+                        <td>int</td>
+                        <td><code>1</code></td>
+                        <td data-en="Warmup iterations (results discarded)"
+                            data-ru="Итерации прогрева (результаты не учитываются)"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--tests</code></td>
+                        <td>int</td>
+                        <td><code>1</code></td>
+                        <td data-en="Test iterations per model" data-ru="Количество тестовых итераций на модель"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--shuffle</code></td>
+                        <td><code>0|1</code></td>
+                        <td><code>1</code></td>
+                        <td data-en="Randomize model order between repeats"
+                            data-ru="Случайный порядок моделей между повторами"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--cooldown_s</code></td>
+                        <td>int</td>
+                        <td><code>4</code></td>
+                        <td data-en="Pause between runs in seconds" data-ru="Пауза между запусками в секундах"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--output_dir</code></td>
+                        <td>path</td>
+                        <td><code>./bench_results</code></td>
+                        <td data-en="Output directory" data-ru="Каталог для результатов"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--bench_name</code></td>
+                        <td>string</td>
+                        <td><code>bench_YY-MM-DD_HH-MM</code></td>
+                        <td data-en="Report filename stem" data-ru="Имя файла отчёта"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--period_ms</code></td>
+                        <td>int</td>
+                        <td><code>100</code></td>
+                        <td data-en="GPU sampling interval in milliseconds" data-ru="Интервал опроса GPU в мс"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--command</code></td>
+                        <td>string</td>
+                        <td>—</td>
+                        <td data-en="Custom ffmpeg command (the part after the pipe)"
+                            data-ru="Пользовательская команда ffmpeg (часть после pipe)"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--ffmpeg_path</code></td>
+                        <td>path</td>
+                        <td><code>ffmpeg</code></td>
+                        <td data-en="Path to ffmpeg binary" data-ru="Путь к ffmpeg"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--vspipe_path</code></td>
+                        <td>path</td>
+                        <td><code>vspipe</code></td>
+                        <td data-en="Path to vspipe binary" data-ru="Путь к vspipe"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--s_frame</code></td>
+                        <td>int</td>
+                        <td>—</td>
+                        <td data-en="Start frame (vspipe <code>-s</code>)"
+                            data-ru="Начальный кадр (vspipe <code>-s</code>)"></td>
+                    </tr>
+
+                    <tr>
+                        <td><code>--e_frame</code></td>
+                        <td>int</td>
+                        <td>—</td>
+                        <td data-en="End frame (vspipe <code>-e</code>)"
+                            data-ru="Конечный кадр (vspipe <code>-e</code>)"></td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="modes">
+            <h2 data-en="Modes" data-ru="Режимы"></h2>
+
+            <h3>vspipe</h3>
+            <p data-en="In <code>vspipe</code> mode, only vspipe is launched. Output frames are discarded (<code>--</code> as output target). This measures pure VapourSynth + model inference performance without encoding overhead."
+                data-ru="В режиме <code>vspipe</code> запускается только vspipe. Кадры сбрасываются (<code>--</code> в качестве цели). Это измеряет чистую производительность VapourSynth + инференса модели без затрат на кодирование.">
+            </p>
+
+            <pre><code># Command constructed by rifebench:
+vspipe -c y4m -p bench.vpy -- \
+  -a source=video.mkv \
+  -a model=47 \
+  -a gpu_id=0 \
+  -a format=RGBH \
+  -a multi=2 \
+  -a streams=2 \
+  -a trt_fp16=1 \
+  -a use_cuda_graph=1</code></pre>
+
+            <p data-en="The final summary line is parsed from stdout:" data-ru="Финальная строка парсится из stdout:">
+            </p>
+            <pre><code>Output 2882 frames in 29.72 seconds (96.99 fps)</code></pre>
+
+            <h3>ffmpeg</h3>
+            <p data-en="In <code>ffmpeg</code> mode, vspipe pipes Y4M output to ffmpeg for encoding. This measures end-to-end throughput including encoding. If <code>--command</code> is not specified, uses the built-in default:"
+                data-ru="В режиме <code>ffmpeg</code> vspipe передаёт Y4M в ffmpeg для кодирования. Это измеряет сквозную производительность включая кодирование. Если <code>--command</code> не указан, используется встроенная команда по умолчанию:">
+            </p>
+
+            <pre><code># vspipe output piped to ffmpeg:
+vspipe -c y4m -p bench.vpy - -a source=... | \
+  ffmpeg -benchmark -i - -c:v hevc_nvenc -preset p5 -cq 18 \
+  -profile:v main10 -pix_fmt p010le -f null NUL</code></pre>
+
+            <div class="warn">
+                <p data-en="<strong>Warning:</strong> The default ffmpeg command uses <code>hevc_nvenc</code> and may not work with all clip formats. Use <code>--command</code> to provide a compatible encoding command."
+                    data-ru="<strong>Внимание:</strong> Команда ffmpeg по умолчанию использует <code>hevc_nvenc</code> и может не работать со всеми форматами клипов. Используйте <code>--command</code> для совместимой команды кодирования.">
+                </p>
+            </div>
+            <p data-en="Parsing in ffmpeg mode extracts <code>fps</code> from progress lines for a running median,
+                then reads the final summary after <code>[out#</code> for <code>frames</code>, <code>fps</code>, and <code>rtime</code>."
+                data-ru="В режиме ffmpeg из строк прогресса извлекается <code>fps</code> для текущей медианы, затем из финальной сводки после <code>[out#</code> — <code>frames</code>, <code>fps</code> и <code>rtime</code>.">
+
+            </p>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="script">
+            <h2 data-en="Script Setup (.vpy)" data-ru="Настройка скрипта (.vpy)"></h2>
+
+            <p data-en="Below is a <em>minimal example</em> showing how your <code>.vpy</code> script should receive
+                and parse the parameters passed by rifebench. The actual RIFE call and pipeline
+                configuration is up to you."
+                data-ru="Ниже приведён <em>минимальный пример</em> того, как ваш <code>.vpy</code> скрипт должен принимать и парсить параметры, передаваемые rifebench. Фактический вызов RIFE и настройка пайплайна — на вашей стороне.">
+            </p>
+
+            <pre><code>...
+# All values arrive as strings via `vspipe -a key=value`.
+source         = globals().get('source', None)
+model          = int(globals().get("model", "47"))
+gpu_id         = int(globals().get("gpu_id", "0"))
+fmt            = globals().get("format", "RGBH")       # "RGBS" | "RGBH"
+multi          = int(globals().get("multi", "2"))
+streams        = int(globals().get("streams", "2"))
+trt_fp16       = bool(int(globals().get("trt_fp16", "1")))
+use_cuda_graph = bool(int(globals().get("use_cuda_graph", "1")))
+...</code></pre>
+
+            <div class="tip">
+                <p data-en="<strong>Key point:</strong> rifebench forwards parameters to your <code>.vpy</code> script as string arguments via <code>vspipe -a key=value</code>. Your script must read and handle them."
+                    data-ru="<strong>Ключевой момент:</strong> rifebench передаёт параметры в ваш <code>.vpy</code> скрипт как строковые аргументы через <code>vspipe -a key=value</code>. Ваш скрипт должен их принять и обработать.">
+                </p>
+            </div>
+
+            <div class="note">
+                <p data-en="<strong>Download:</strong>  <a href=https://raw.githubusercontent.com/We0M/rifebench/master/bench.vpy/>bench.vpy</a>"
+                    data-ru="<strong>Скачать:</strong>  <a href=https://raw.githubusercontent.com/We0M/rifebench/master/bench.vpy/>bench.vpy</a>">
+                </p>
+            </div>
+
+            <h3 data-en="Parameters received by the script" data-ru="Параметры, получаемые скриптом"></h3>
+            <div class="table-wrap">
+                <table>
+                    <tr>
+                        <th data-en="Key" data-ru="Ключ"></th>
+                        <th data-en="Example value" data-ru="Пример значения"></th>
+                        <th data-en="Notes" data-ru="Примечания"></th>
+                    </tr>
+                    <tr>
+                        <td><code>source</code></td>
+                        <td><code>D:/test.mkv</code></td>
+                        <td data-en="Absolute path" data-ru="Абсолютный путь"></td>
+                    </tr>
+                    <tr>
+                        <td><code>model</code></td>
+                        <td><code>47</code></td>
+                        <td data-en="RIFE model number" data-ru="Номер модели RIFE"></td>
+                    </tr>
+                    <tr>
+                        <td><code>format</code></td>
+                        <td><code>RGBH</code></td>
+                        <td><code>RGBS</code> or <code>RGBH</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>multi</code></td>
+                        <td><code>2</code></td>
+                        <td data-en="Frame multiplier" data-ru="Множитель кадров"></td>
+                    </tr>
+                    <tr>
+                        <td><code>gpu_id</code></td>
+                        <td><code>0</code></td>
+                        <td data-en="GPU device index" data-ru="Индекс GPU"></td>
+                    </tr>
+                    <tr>
+                        <td><code>streams</code></td>
+                        <td><code>2</code></td>
+                        <td data-en="Inference streams" data-ru="Потоки инференса"></td>
+                    </tr>
+                    <tr>
+                        <td><code>trt_fp16</code></td>
+                        <td><code>1</code></td>
+                        <td><code>0</code> or <code>1</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>use_cuda_graph</code></td>
+                        <td><code>1</code></td>
+                        <td><code>0</code> or <code>1</code></td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="report">
+            <h2 data-en="Report Format" data-ru="Формат отчёта"></h2>
+
+            <p data-en="Reports are saved as <code>&lt;bench_name&gt;.md</code> in <code>--output_dir</code>. If the file already exists, a suffix <code>_01</code>, <code>_02</code>, … is appended."
+                data-ru="Отчёты сохраняются как <code>&lt;bench_name&gt;.md</code> в <code>--output_dir</code>. Если файл существует, добавляется суффикс <code>_01</code>, <code>_02</code>, ….">
+            </p>
+
+            <h3 data-en="Specs Section" data-ru="Раздел спецификаций"></h3>
+
+            <p data-en="System information collected before benchmarking"
+                data-ru="Информация о системе, собранная до бенчмарка">
+            </p>
+            <pre><code>- OS, GPU model, Driver version, CUDA version
+- TDP (Power Limit), Total/Used/Free VRAM
+- CPU: name, cores, clock
+- Bench Mode (vspipe / ffmpeg)
+- VapourSynth version (Core R73)
+- Source info: Width, Height, Frames, FPS, Format
+- Clip info: Width, Height, Frames, FPS, Format Name</code></pre>
+
+            <h3 data-en="Summary Table" data-ru="Сводная таблица"></h3>
+
+            <p data-en="Aggregated results per model across all <strong>successful</strong> iterations."
+                data-ru="Агрегированные результаты по модели из всех <strong>успешных</strong> итераций."></p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>model</th>
+                            <th>FPS avg,med,min</th>
+                            <th>Time avg,med,max</th>
+                            <th>GPU util</th>
+                            <th>VRAM Mb</th>
+                            <th>VRAM_MAX</th>
+                            <th>PWR W</th>
+                            <th>PWR_max</th>
+                            <th>rxpci_max</th>
+                            <th>txpci_max</th>
+                            <th>Frames</th>
+                            <th>Runs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>47</td>
+                            <td>97 / 96.5 / 95</td>
+                            <td>29.7 / 29.8 / 30.1</td>
+                            <td>94%</td>
+                            <td>3820</td>
+                            <td>3950</td>
+                            <td>285</td>
+                            <td>310</td>
+                            <td>12400</td>
+                            <td>240</td>
+                            <td>2882</td>
+                            <td>3/3</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 data-en="All Runs Table" data-ru="Таблица всех запусков"></h3>
+
+            <p data-en="Per-run detail with GPU sample aggregates: <code>avg</code>, <code>p99</code>, <code>max</code> computed
+                from samples within that single run."
+                data-ru="Детали каждого запуска с агрегатами GPU-сэмплов: <code>avg</code>, <code>p99</code>, <code>max</code> рассчитываются из сэмплов внутри одного запуска.">
+            </p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>model</th>
+                            <th>run</th>
+                            <th>frames</th>
+                            <th>fps</th>
+                            <th>time_s</th>
+                            <th>gpu_avg</th>
+                            <th>gpu_p99</th>
+                            <th>mem_avg</th>
+                            <th>mem_p99</th>
+                            <th>vram_avg</th>
+                            <th>vram_max</th>
+                            <th>pwr_avg</th>
+                            <th>pwr_max</th>
+                            <th>rx_avg</th>
+                            <th>rx_max</th>
+                            <th>tx_avg</th>
+                            <th>tx_max</th>
+                            <th>gpu_clk</th>
+                            <th>mem_clk</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>47</td>
+                            <td>1</td>
+                            <td>2882</td>
+                            <td>96.99</td>
+                            <td>29.72</td>
+                            <td>94</td>
+                            <td>98</td>
+                            <td>62</td>
+                            <td>78</td>
+                            <td>3820</td>
+                            <td>3950</td>
+                            <td>285</td>
+                            <td>310</td>
+                            <td>11800</td>
+                            <td>12400</td>
+                            <td>220</td>
+                            <td>240</td>
+                            <td>2100</td>
+                            <td>10501</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 data-en="Errors Section" data-ru="Раздел ошибок"></h3>
+
+            <pre><code>## Errors
+
+**Error in model:** `4252` **test:** `1` | **log:** [log](logs/bench_26-03-22_19-23.md#error-in-model-4252-test-1)  
+**Error in model:** `4252` **test:** `2` | **log:** [log](logs/bench_26-03-22_19-23.md#error-in-model-4252-test-2)  "</code></pre>
+
+            <h3 data-en="Runtime Arguments"></h3>
+
+            <pre><code>## Runtime Arguments:
+
+**script**: `./bench.vpy` ┆**source**: `./clip.mkv` ┆ **models**: `[412, 414, 4151, 4171, 418, 425, 4251, 4252, 426, 4262]` ┆ **mode**: `vspipe` ┆ **format**: `RGBH` ... "</code></pre>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="gpu">
+            <h2 data-en="GPU Sampling" data-ru="GPU мониторинг"></h2>
+
+            <p data-en="GPU metrics are collected only during test runs (not warmup) via <code>pynvml</code> in a background thread. Sampling interval is controlled by <code>--period_ms</code> (default 100 ms)."
+                data-ru="Метрики GPU собираются только во время тестовых запусков (не прогрев) через <code>pynvml</code> в фоновом потоке. Интервал опроса задаётся <code>--period_ms</code> (по умолчанию 100 мс).">
+            </p>
+
+            <h3 data-en="Collected Metrics" data-ru="Собираемые метрики"></h3>
+            <div class="table-wrap">
+                <table>
+                    <tr>
+                        <th data-en="Metric" data-ru="Метрика"></th>
+                        <th data-en="Unit" data-ru="Единица"></th>
+                        <th data-en="Source" data-ru="Источник"></th>
+                    </tr>
+                    <tr>
+                        <td><code>gpu_util</code></td>
+                        <td>%</td>
+                        <td>nvmlDeviceGetUtilizationRates</td>
+                    </tr>
+                    <tr>
+                        <td><code>mem_util</code></td>
+                        <td>%</td>
+                        <td>nvmlDeviceGetUtilizationRates</td>
+                    </tr>
+                    <tr>
+                        <td><code>power_w</code></td>
+                        <td>W</td>
+                        <td>nvmlDeviceGetPowerUsage</td>
+                    </tr>
+                    <tr>
+                        <td><code>vram_mb</code></td>
+                        <td>MB</td>
+                        <td>nvmlDeviceGetMemoryInfo</td>
+                    </tr>
+                    <tr>
+                        <td><code>rxpci_mb_s</code></td>
+                        <td>MB/s</td>
+                        <td>nvmlDeviceGetPcieThroughput (RX)</td>
+                    </tr>
+                    <tr>
+                        <td><code>txpci_mb_s</code></td>
+                        <td>MB/s</td>
+                        <td>nvmlDeviceGetPcieThroughput (TX)</td>
+                    </tr>
+                    <tr>
+                        <td><code>gpu_clock</code></td>
+                        <td>MHz</td>
+                        <td>nvmlDeviceGetClockInfo (GRAPHICS)</td>
+                    </tr>
+                    <tr>
+                        <td><code>mem_clock</code></td>
+                        <td>MHz</td>
+                        <td>nvmlDeviceGetClockInfo (MEM)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="note">
+                <p data-en="If a GPU metric fails to read (e.g., PCIe throughput not supported on some GPUs), it is recorded as <strong><code>N/A</code></strong>. The benchmark run is still considered successful."
+                    data-ru="Если метрика GPU не читается (напр., пропускная способность PCIe не поддерживается), она записывается как <strong><code>N/A</code></strong>. Запуск бенчмарка считается успешным.">
+                </p>
+            </div>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="errors">
+            <h2 data-en="Error Handling" data-ru="Обработка ошибок"></h2>
+
+            <ul>
+                <li data-en="Non-zero process exit code → iteration marked as <strong>failed</strong>"
+                    data-ru="Ненулевой код завершения процесса → итерация отмечена как <strong>неудачная</strong>"></li>
+                <li data-en="Missing core metrics (<code>frames</code> / <code>fps</code> / <code>time_s</code> or <code>rtime</code>) → iteration marked as <strong>failed</strong>"
+                    data-ru="Не удалось получить основные метрики (<code>frames</code> / <code>fps</code> / <code>time_s</code> или <code>rtime</code>) → итерация отмечена как <strong>неудачная</strong>">
+                </li>
+                <li data-en="Missing GPU metrics → reported as <code>N/A</code>, but iteration is still <strong>successful</strong>"
+                    data-ru="Не удалось получить GPU-метрики → записывается <code>N/A</code>, но итерация считается <strong>успешной</strong>">
+                </li>
+                <li data-en="Only successful iterations are included in Summary statistics"
+                    data-ru="В сводную статистику включаются только успешные итерации"></li>
+                <li data-en="Errors are logged in the <code>## Errors</code> section of the report"
+                    data-ru="Ошибки записываются в раздел <code>## Errors</code> отчёта"></li>
+            </ul>
+
+        </section>
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="arch">
+            <h2 data-en="Architecture" data-ru="Архитектура"></h2>
+
+            <pre class="arch"><code>rifebench/
+│   src/
+│   ├── __init__.py        # Package init, version
+│   ├── __main__.py        # Entry point (python -m rifebench)
+│   ├── cli.py             # Argument parser
+│   ├── runner.py          # Process execution & orchestration
+│   ├── parser.py          # Output parsing & media probing
+│   ├── sampler.py         # GPU telemetry (pynvml, background thread)
+│   └── reporter.py        # Markdown report generation
+├── pyproject.toml     # Package metadata
+├── README.md          # This file
+└── rifebench.html     # Offline documentation (EN/RU)</code></pre>
+
+        </section>
+        <!-- ════════════════════════════════════════════════════════════ -->
+        <section id="examples">
+            <h2 data-en="Examples" data-ru="Примеры"></h2>
+
+            <h3 data-en="Basic benchmark (vspipe mode)" data-ru="Базовый бенчмарк (режим vspipe)"></h3>
+            <pre><code>rifebench \
+  --script ./bench.mkv \
+  --source ./clip.mkv \
+  --models 47,425,417 \
+  --tests 3 \
+  --warmup_runs 1</code></pre>
+
+            <h3 data-en="FFmpeg mode with custom encoder" data-ru="Режим ffmpeg с кастомным кодировщиком"></h3>
+            <pre><code>rifebench \
+  --script ./bench.mkv \
+  --source ./test_clip.mkv \
+  --models 47,425 \
+  --mode ffmpeg \
+  --command "ffmpeg -benchmark -i - -c:v libx264 -preset ultrafast -f null /dev/null" \
+  --tests 2</code></pre>
+
+            <h3 data-en="Custom paths and GPU selection" data-ru="Пользовательские пути и выбор GPU"></h3>
+            <pre><code>rifebench \
+  --script ./bench.mkv \
+  --source D:\video\test.mkv \
+  --models 47 \
+  --vspipe_path "C:\VS\vspipe.exe" \
+  --ffmpeg_path "C:\ffmpeg\bin\ffmpeg.exe" \
+  --gpu_id 1 \
+  --script D:\scripts\my_bench.vpy</code></pre>
+
+            <h3 data-en="Frame range and no warmup" data-ru="Диапазон кадров без прогрева"></h3>
+            <pre><code>rifebench \
+  --script ./bench.mkv \
+  --source ./clip.mkv \
+  --models 47 \
+  --s_frame 100 \
+  --e_frame 500 \
+  --warmup_runs 0 \
+  --tests 5 \
+  --cooldown_s 10</code></pre>
+
+            <h3 data-en="Minimal single model test" data-ru="Минимальный тест одной модели"></h3>
+            <pre><code>rifebench --script ./bench.mkv --source video.mp4 --models 47</code></pre>
+        </section>
+
+        <!-- ════════════════════════════════════════════════════════════ -->
+
+        <footer>
+            <p>rifebench v0.1.0 — MIT License</p>
+        </footer>
+
+    </div><!-- .wrap -->
+
+    <script>
+        // ── Bilingual support ───────────────────────────────────────
+        // All translatable elements have data-en and data-ru attributes.
+        // We swap innerHTML based on the selected language.
+        // Default language is English; saved to localStorage.
+
+        function setLang(lang) {
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.innerHTML = el.getAttribute('data-' + lang) || el.getAttribute('data-en');
+            });
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            document.getElementById('btn-ru').classList.toggle('active', lang === 'ru');
+            try { localStorage.setItem('rifebench-lang', lang); } catch (e) { }
+        }
+
+        // Init from saved preference or default to English
+        (function () {
+            var saved = 'en';
+            try { saved = localStorage.getItem('rifebench-lang') || 'en'; } catch (e) { }
+            setLang(saved);
+        })();
+    </script>
+</body>
+
+</html>

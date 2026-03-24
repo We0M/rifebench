@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rifebench"
+version = "0.1.5"
+description = "RIFE model benchmark tool for VapourSynth + vs-mlrt"
+requires-python = ">=3.10"
+dependencies = [
+    "nvidia-ml-py>=13.0.0",
+]
+
+[project.optional-dependencies]
+probe = ["ffmpeg-python>=0.2.0"]
+
+[project.scripts]
+rifebench = "src.__main__:main"
